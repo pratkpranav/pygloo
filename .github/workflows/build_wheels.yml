@@ -16,6 +16,7 @@ jobs:
 
     - name: Build wheels in Docker
       run: |
+        chmod +x build_wheels.sh
         docker pull quay.io/pypa/manylinux2014_x86_64
         docker run --rm -v $(pwd):/io quay.io/pypa/manylinux2014_x86_64 /io/build_wheels.sh
 
