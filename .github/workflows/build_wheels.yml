@@ -14,12 +14,26 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Build wheels in Docker
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget gcc zlib1g-dev zip libuv1-dev
+
+    - name: Install Bazel
+      run: |
+        wget https://github.com/bazelbuild/bazel/releases/download/3.2.0/bazel-3.2.0-linux-x86_64
+        chmod +x bazel-3.2.0-linux-x86_64
+        sudo mv bazel-3.2.0-linux-x86_64 /usr/local/bin/bazel
+
+    - name: Build wheels
       run: |
         chmod +x build_wheels.sh
-        docker pull quay.io/pypa/manylinux2014_x86_64
-        docker run --rm -v $(pwd):/io -w /io quay.io/pypa/manylinux2014_x86_64 bash -c "yum install -yq wget gcc zlib-devel zip libuv-devel && wget https://github.com/bazelbuild/bazel/releases/download/3.2.0/bazel-3.2.0-linux-x86_64 && chmod +x bazel-3.2.0-linux-x86_64 && mv bazel-3.2.0-linux-x86_64 /usr/local/bin/bazel && /io/build_wheels.sh"
-
+        ./build_wheels.sh
 
     - name: Upload wheels as artifacts
       uses: actions/upload-artifact@v2
