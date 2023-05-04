@@ -18,7 +18,8 @@ jobs:
       run: |
         chmod +x build_wheels.sh
         docker pull quay.io/pypa/manylinux2014_x86_64
-        docker run --rm -v $(pwd):/io -w /io quay.io/pypa/manylinux2014_x86_64 /io/build_wheels.sh
+        docker run --rm -v $(pwd):/io -w /io quay.io/pypa/manylinux2014_x86_64 bash -c "yum install -y wget && wget https://github.com/bazelbuild/bazel/releases/download/3.2.0/bazel-3.2.0-linux-x86_64 && chmod +x bazel-3.2.0-linux-x86_64 && mv bazel-3.2.0-linux-x86_64 /usr/local/bin/bazel && /io/build_wheels.sh"
+
 
     - name: Upload wheels as artifacts
       uses: actions/upload-artifact@v2
