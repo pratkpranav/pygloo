@@ -29,7 +29,8 @@ jobs:
       env:
         CIBW_BUILD: 'cp3{7,8,9,10}-*'
         CIBW_SKIP: '*-win32 *-win_amd64 *-macosx_x86_64'
-        CIBW_BEFORE_BUILD: 'curl -LO https://github.com/bazelbuild/bazel/releases/download/5.1.0/bazel_5.1.0-linux-x86_64.deb && sudo dpkg -i bazel_5.1.0-linux-x86_64.deb && rm bazel_5.1.0-linux-x86_64.deb'
+        CIBW_BEFORE_BUILD: 'curl -LO https://github.com/bazelbuild/bazel/releases/download/5.1.0/bazel-5.1.0-linux-x86_64 && chmod +x bazel-5.1.0-linux-x86_64 && mv bazel-5.1.0-linux-x86_64 /usr/local/bin/bazel'
+
 
 
     - name: Upload wheels as artifacts
