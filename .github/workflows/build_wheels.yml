@@ -32,3 +32,8 @@ jobs:
     - name: Build wheels
       run: |
            bash build_wheels.sh
+    
+    - name: Upload wheels
+      uses: actions/upload-artifact@v2
+      with:
+        path: ./dist/*.whl
