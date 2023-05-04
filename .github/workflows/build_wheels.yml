@@ -9,32 +9,41 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Set up Python
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
-        python-version: "3.x"
+        python-version: ${{ matrix.python-version }}
 
-    - name: Install cibuildwheel
+    - name: Install Bazel
       run: |
-        python -m pip install cibuildwheel
-
-    - name: Build wheels
+        sudo apt-get update
+        sudo apt-get install -y curl gnupg
+        curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+        sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
+        echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+        sudo apt-get update
+        sudo apt-get install -y bazel
+    - name: Install dependencies
       run: |
-        python -m cibuildwheel --output-dir wheelhouse
-      env:
-        CIBW_BUILD: 'cp3{7,8,9,10}-*'
-        CIBW_SKIP: '*-win32 *-win_amd64 *-macosx_x86_64'
-        CIBW_BEFORE_BUILD: 'curl -LO https://github.com/bazelbuild/bazel/releases/download/5.1.0/bazel-5.1.0-linux-x86_64 && chmod +x bazel-5.1.0-linux-x86_64 && mv bazel-5.1.0-linux-x86_64 /usr/local/bin/bazel'
-
-
-
+        python -m pip install --upgrade pip
+        pip install setuptools wheel
+    - name: Build wheel
+      run: |
+        python setup.py bdist_wheel
+    - name: Install auditwheel and repair wheel
+      run: |
+        python -m pip install auditwheel
+        WHEEL_NAME=$(ls dist/*.whl)
     - name: Upload wheels as artifacts
       uses: actions/upload-artifact@v2
       with:
         name: wheels
-        path: wheelhouse/*.whl
+        path: dist/*.whl
