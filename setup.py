@@ -99,7 +99,15 @@ def build():
     bazel_targets = ["//pygloo:all"]
     return bazel_invoke(
         subprocess.check_call,
-        ["build", "--verbose_failures", "--"] + bazel_targets,
+        [
+            "build",
+            "--verbose_failures",
+            "--copt=-mavx",
+            "--copt=-mavx2",
+            "--copt=-mfma",
+            "--",
+        ]
+        + bazel_targets,
         env=bazel_env,
     )
 
