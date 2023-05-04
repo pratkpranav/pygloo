@@ -29,7 +29,8 @@ jobs:
       env:
         CIBW_BUILD: 'cp3{7,8,9,10}-*'
         CIBW_SKIP: '*-win32 *-win_amd64 *-macosx_x86_64'
-        CIBW_BEFORE_BUILD: 'apt-get update && apt-get install -y curl gnupg && curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg && mv bazel.gpg /etc/apt/trusted.gpg.d/ && echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" > /etc/apt/sources.list.d/bazel.list && apt-get update && apt-get install -y bazel'
+        CIBW_BEFORE_BUILD: 'curl -LO https://github.com/bazelbuild/bazel/releases/download/5.1.0/bazel_5.1.0-linux-x86_64.deb && sudo dpkg -i bazel_5.1.0-linux-x86_64.deb && rm bazel_5.1.0-linux-x86_64.deb'
+
 
     - name: Upload wheels as artifacts
       uses: actions/upload-artifact@v2
